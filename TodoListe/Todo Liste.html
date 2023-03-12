@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TodoList</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+    </head>
+        <style>
+            #todolist{
+        max-width: 800px;
+        min-height: 500px;
+        margin-top: 70px;
+        border: solid black 2px;
+        background: linear-gradient(to right, #bdc3c7,#2c3e50);
+        }
+
+        body{
+            background: linear-gradient(to left, #000000,#434343);
+        }
+    </style>
+    <body>
+
+        <section class="container pt-5" id="todolist">
+            <form class="d-flex pb-4" id="todo-form">
+                <input required="" class="form-control" type="text" placeholder="Acheter des patates..." name="title" data-com.bitwarden.browser.user-edited="yes" id="todo-input">
+                <button class="btn btn-primary">Ajouter</button>
+            </form>
+            <main>
+                <div class="btn-group mb-4" role="group">
+                    <button type="button" class="btn btn-outline-primary active" data-filter="all">Toutes</button>
+                    <button type="button" class="btn btn-outline-primary" data-filter="todo">A faire</button>
+                    <button type="button" class="btn btn-outline-primary" data-filter="done">Faites</button>
+                </div>
+
+                <ul class="list-group" id="todo-list">
+                </ul>
+            </main>
+        </section>
+
+        <script>
+            // Récupérer les éléments HTML nécessaires
+            const todoForm = document.getElementById("todo-form");
+            const todoInput = document.getElementById("todo-input");
+            const todoList = document.getElementById("todo-list");
+
+            // Ajouter un gestionnaire d'événement pour la soumission du formulaire
+            todoForm.addEventListener("submit", (event) => {
+                event.preventDefault(); // Empêcher le rechargement de la page
+
+                const title = todoInput.value; // Récupérer la valeur du champ de saisie
+                if (!title) {
+                    return; // Si le champ est vide, ne rien faire
+                }
+
+                // Créer les éléments HTML pour la nouvelle tâche
+                const todoItem = document.createElement("li");
+                const todoCheckbox = document.createElement("input");
+                const todoLabel = document.createElement("label");
+                const todoDeleteButton = document.createElement("button");
+                const todoDeleteIcon = document.createElement("i");
+
+                // Configurer les éléments HTML pour la nouvelle tâche
+                todoItem.classList.add("todo", "list-group-item", "d-flex", "align-items-center");
+                todoCheckbox.classList.add("form-check-input");
+                todoCheckbox.setAttribute("type", "checkbox");
+                todoLabel.classList.add("ms-2", "form-check-label");
+                todoLabel.innerText = title;
+                todoDeleteButton.classList.add("ms-auto", "btn", "btn-danger", "btn-sm");
+                todoDeleteIcon.classList.add("bi-trash");
+                todoDeleteButton.appendChild(todoDeleteIcon);
+
+                // Ajouter un gestionnaire d'événement pour le clic sur le bouton de suppression
+                todoDeleteButton.addEventListener("click", () => {
+                    todoItem.remove(); // Supprimer la tâche de la liste
+                });
+
+                // Ajouter les éléments HTML pour la nouvelle tâche à la liste
+                todoList.appendChild(todoItem);
+                todoItem.appendChild(todoCheckbox);
+                todoItem.appendChild(todoLabel);
+                todoItem.appendChild(todoDeleteButton);
+                // Réinitialiser le champ de saisie
+                todoInput.value = "";
+
+
+                todoCheckbox.addEventListener("change", function(){
+                    // Vérifier si la checkbox est cochée
+                    if(this.checked) {
+                        // Si la checkbox est cochée, ajouter la classe "Fait"
+                        const div = document.createElement("div")
+                        div.classList = id = "Fait"
+                        todoItem.appendChild(div)
+                    } else {
+                        // Si la checkbox n'est pas cochée, enlever la classe "Fait" si elle existe
+                        const divFait = todoItem.querySelector(".Fait");
+                        if(divFait) {
+                            divFait.remove();
+                        }
+                    }
+                })
+
+                            // Ajouter un gestionnaire d'événement pour le changement de filtre
+                const filterButtons = document.querySelectorAll('[data-filter]');
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const filter = button.getAttribute('data-filter');
+                        filterButtons.forEach(button => button.classList.remove('active'));
+                        button.classList.add('active');
+                        filterTodo();
+                    });
+                });
+                // Fonction pour filtrer les tâches en fonction du bouton cliqué
+                function filterTodo() {
+                    const filter = document.querySelector(".btn-group .active").getAttribute("data-filter");
+
+                    // Parcourir toutes les tâches et les cacher ou les afficher en fonction du filtre sélectionné
+                    const todoItems = document.querySelectorAll(".todo");
+                    todoItems.forEach((item) => {
+                        if (filter === "all") {
+                            item.classList.remove("d-none");
+                        } else if (filter === "todo") {
+                            if (item.querySelector("div.Fait") == null) {
+                                item.classList.remove("d-none");
+                            } else {
+                                item.classList.add("d-none");
+                            }
+                        } else if (filter === "done") {
+                            if (item.querySelector("div.Fait") != null) {
+                                item.classList.remove("d-none");
+                            } else {
+                                item.classList.add("d-none");
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
